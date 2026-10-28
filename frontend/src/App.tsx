@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDropzone } from "react-dropzone";
 import {
@@ -21,7 +21,6 @@ import {
   CircleAlert,
   Clock3,
   FileCheck2,
-  FileSpreadsheet,
   FileText,
   History,
   Inbox,
@@ -30,6 +29,7 @@ import {
   Link2,
   Loader2,
   LogOut,
+  MessageSquare,
   Plus,
   RefreshCw,
   Search,
@@ -65,6 +65,7 @@ import DeleteBillDialog, {
 import { dateRange } from "./dates";
 import { Users, Database } from "lucide-react";
 import Customization from "./Customization";
+const AIAssistant = lazy(() => import("./AIAssistant"));
 import SharedFilters, { SOURCES } from "./components/SharedFilters";
 
 const sourceClass: Record<string, string> = {
@@ -103,6 +104,7 @@ function Status({ value }: { value: string }) {
   );
 }
 const titles = {
+  ai: ["AI 账本助手", "查询分析账本，逐项确认每一次修改。"],
   import: ["账单工作台", "把零散的消费，整理成清楚的每一笔。"],
   history: ["操作记录", "导入、编辑和新增，每一步都有记录。"],
   data: ["数据管理", "管理导入账单与回收站，数据仅属于当前账号。"],
@@ -187,7 +189,6 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState(() => dateRange("month")[0]);
   const [dateTo, setDateTo] = useState(() => dateRange("month")[1]);
-  const [account, setAccount] = useState("默认账户");
   const [jobDetail, setJobDetail] = useState<any>(null);
   const [checkJobId,setCheckJobId] = useState<string|null>(null);
   const [manualOpen, setManualOpen] = useState(false);
@@ -282,7 +283,8 @@ export default function App() {
     setUploading(true);
     const fd = new FormData();
     files.forEach((f) => fd.append("files", f));
-    fd.append("account", account || "默认账户");
+    // Keep the established account identity for deduplication and refund matching.
+    fd.append("account", "默认账户");
     try {
       await api("/imports", { method: "POST", body: fd });
       notify(`已接收 ${files.length} 个文件，正在后台解析`);
@@ -581,10 +583,10 @@ export default function App() {
             }
           }}
         >
-          <span className="brand-mark">
-            <FileSpreadsheet size={25} />
+          <span className="brand-mark billflow-mark">
+            <img src="/billflow-logo.svg" alt="" />
           </span>
-          <h1>账单整理</h1>
+          <h1>BillFlow</h1>
           <p>登录你的私人账单工作台</p>
           <label className="field">
             账号名
@@ -628,11 +630,11 @@ export default function App() {
           }}
           className="brand"
         >
-          <span className="brand-mark">
-            <FileSpreadsheet size={23} />
+          <span className="brand-mark billflow-mark">
+            <img src="/billflow-logo.svg" alt="" />
           </span>
           <div>
-            <strong>账单整理</strong>
+            <strong>BillFlow</strong>
             <small>让每一笔，都清楚</small>
           </div>
         </a>
@@ -640,6 +642,7 @@ export default function App() {
           {(
             [
               ["import", LayoutGrid, "账单工作台"],
+              ["ai", MessageSquare, "AI 账本助手"],
               ["customization", Sparkles, "账单自定义"],
               ["history", History, "操作记录"],
               ["data", Database, "数据管理"],
@@ -732,7 +735,9 @@ export default function App() {
               </div>
             )}
           </div>
-          {page === "data" ? (
+          {page === "ai" ? (
+            <Suspense fallback={<p>正在加载 AI 助手…</p>}><AIAssistant notify={notify} onChanged={refresh} /></Suspense>
+          ) : page === "data" ? (
             <DataManagement
               openExpense={openOperationEvent}
               initialTab={dataTab}
@@ -830,20 +835,6 @@ export default function App() {
                   </Button>
                 </aside>
               </section>
-              <div className="account-row">
-                <label>
-                  支付账户别名{" "}
-                  <input
-                    aria-label="支付账户别名"
-                    value={account}
-                    maxLength={80}
-                    onChange={(e) => setAccount(e.target.value)}
-                  />
-                </label>
-                <span title="同一人的重叠账期请沿用相同别名，不同人的账单请分开导入。">
-                  重叠账期使用同一别名
-                </span>
-              </div>
               {active.length > 0 && (
                 <div className="notice">
                   <Loader2 size={17} className="spin" />

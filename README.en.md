@@ -90,6 +90,20 @@ Runtime data is created under `data/` or the Docker `ledger_data` volume, includ
 
 Local credential encryption uses `data/credential.key`; Docker uses `CREDENTIAL_KEY` from `.env`. Stop API and worker before backing up the entire data directory or volume, and securely back up the key separately. Losing the key prevents decryption of saved Feishu credentials. Never commit `.env` or runtime data, or expose the development server publicly. OCR runs locally; Feishu sync sends selected bill fields to Feishu.
 
+## AI ledger assistant
+
+Open **AI 账本助手 → AI 配置** and enter the API base URL, API key and model name. OpenAI and compatible third-party services are supported with automatic protocol selection or an explicit Responses/Chat Completions choice; the model must support function calling. Load the available models to select an exact model ID, test the current form values, then confirm saving. Tests do not save configuration. Base URLs usually end in `/v1`; the application appends the selected endpoint. A matching full endpoint URL is also accepted. Use HTTPS for remote services; HTTP is supported for loopback services. When changing the base URL, re-enter the appropriate API key or clear the old key. API keys are encrypted per account and are never returned to the browser or included in model context. Before enabling the feature, explicitly consent to sending chat messages and the ledger fields and rules needed for queries to the configured API service.
+
+Temporary rate limits are retried up to three times with bounded backoff and visible progress. Insufficient credit is not retried, and persistent provider limits are reported rather than bypassed. Analysis requests fetch rule schemas only when needed.
+
+Assistant replies render Markdown headings, emphasis, lists, tables, blockquotes, code blocks and links, including existing conversation history.
+
+The assistant can analyze Feishu records, draft updates to existing records' category/environment/description, and draft the corresponding BillFlow classification and field-mapping rules. It uses existing field options only. It cannot create or delete records, fields or options, or change amounts, dates, sync keys, credentials or account permissions.
+
+Every write requires a detailed confirmation dialog showing the before/after values, reason and scope. Nothing is selected by default. Approve individual items and click the execution button; saying “yes” in chat does not execute anything. Drafts expire after 30 minutes. The backend rechecks old values and rejects conflicts. Uncertain writes can be reconciled through read-only verification without blindly resending them. Changes are audited.
+
+Changing Feishu records and changing BillFlow rules are separate operations. Record changes retain per-record overrides for linked local entries, so later normal syncs preserve approved values. Rule changes affect subsequent sync previews and do not immediately rewrite historical Feishu records. Each draft supports up to 100 field changes. Conversations and approvals remain in each account's private data directory and are excluded from source publication.
+
 ## License
 
 [MIT](LICENSE).

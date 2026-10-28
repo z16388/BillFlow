@@ -263,6 +263,15 @@ input[type="checkbox"] {
   color: #25364a;
   letter-spacing: 1px;
 }
+.brand-mark.billflow-mark {
+  background: transparent;
+  border: 0;
+}
+.billflow-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .brand small {
   display: block;
   font-size: 9px;

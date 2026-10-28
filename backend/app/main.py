@@ -570,6 +570,8 @@ def put_customization(body: CustomRules):
         c.execute('BEGIN IMMEDIATE')
         if c.execute("SELECT 1 FROM jobs WHERE state IN ('queued','running') AND payload LIKE '%\"kind\":\"sync\"%' LIMIT 1").fetchone():
             raise ValueError('同步任务正在执行，请完成后再修改规则')
+        from .ai_assistant import assert_idle
+        assert_idle(c)
         current = c.execute('SELECT payload,version FROM customization WHERE id=1').fetchone()
         if current['version'] != body.version:
             raise ValueError('规则已被其他页面修改，请刷新后重新编辑')
@@ -626,6 +628,8 @@ def put_ledger(body: Config):
     # Saving any config invalidates the old connection and previews.
     with storage.db() as c:
         c.execute('BEGIN IMMEDIATE')
+        from .ai_assistant import assert_idle
+        assert_idle(c)
         if c.execute("SELECT 1 FROM jobs WHERE state IN ('queued','running') AND payload LIKE '%\"kind\":\"sync\"%' LIMIT 1").fetchone():raise ValueError('同步任务正在执行，请完成后再修改账本设置')
         current=c.execute('SELECT version FROM settings WHERE id=1').fetchone()
         if body.version is not None and body.version!=(current[0] if current else 0):raise ValueError('设置已被其他页面修改，请刷新后重试')
@@ -651,6 +655,8 @@ class MappingSave(BaseModel):
 def save_field_mapping(body: MappingSave):
     with storage.db() as c:
         c.execute('BEGIN IMMEDIATE')
+        from .ai_assistant import assert_idle
+        assert_idle(c)
         row=c.execute('SELECT payload,version FROM settings WHERE id=1').fetchone()
         if not row:raise ValueError('请先保存账本连接配置')
         if row['version']!=body.version:raise ValueError('设置已被其他页面修改，请刷新后重试')
@@ -864,6 +870,8 @@ def submit(body: Submit):
     cfg = storage.settings(True)
     with storage.db() as c:
         c.execute('BEGIN IMMEDIATE')
+        from .ai_assistant import assert_idle
+        assert_idle(c)
         row = c.execute("SELECT payload FROM jobs WHERE id=? AND state='preview'", (body.preview_id,)).fetchone()
         if not row:
             raise ValueError('预览已提交或不存在，请重新预览')
@@ -913,6 +921,8 @@ def retry(jid: str, body: RetryItems | None = None):
             raise ValueError('所选记录已成功或存在远端差异，请重新核对，不会重复写入')
     with storage.db() as c:
         c.execute('BEGIN IMMEDIATE')
+        from .ai_assistant import assert_idle
+        assert_idle(c)
         row = c.execute('SELECT * FROM jobs WHERE id=?', (jid,)).fetchone()
         if not row or row['state'] != 'partial':
             raise ValueError('只有已结束的部分失败任务可以重试')
@@ -1046,3 +1056,7 @@ def delete_screenshot_enrichment(event_id: str):
         c.execute('INSERT OR REPLACE INTO decisions VALUES (?,?)',(event_id,storage.dumps(updated)))
         storage.record_operation(c,'edit','douyin_screenshot_remove','移除截图补充信息',event_id,old,updated)
     return {'ok':True}
+
+
+from .ai_assistant import router as ai_router
+app.include_router(ai_router)
