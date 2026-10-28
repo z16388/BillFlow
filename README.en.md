@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | [English](README.en.md)
 
-A self-hosted personal bill workspace. Import statements, reconcile expenses and refunds, review duplicates, then preview and confirm synchronization to Feishu Bitable. Your data stays on your device or server until you choose to sync it.
+BillFlow is a personal bill workspace for importing statements, reconciling expenses and refunds, resolving duplicate records, and synchronizing to Feishu Bitable after preview and confirmation. Data is stored on your own device or server.
 
 ## Features
 
@@ -11,8 +11,6 @@ A self-hosted personal bill workspace. Import statements, reconcile expenses and
 - Offline OCR for Douyin order screenshots, with manual review.
 - Feishu field mapping, sync preview and result verification.
 - Multiple accounts with separate ledgers, recycle bin and activity history.
-
-Documentation is available in English and Simplified Chinese. The application UI currently uses Simplified Chinese. Export format changes may affect parsing; review imported results. Live Feishu writes and Linux container deployment still require deployment-specific validation.
 
 ## Windows setup
 
@@ -34,6 +32,8 @@ Keep this terminal open. In another PowerShell at the project root:
 powershell -ExecutionPolicy Bypass -File scripts/start-frontend.ps1
 ```
 
+You can also run `start-backend.cmd` and `start-frontend.cmd` from the project root. Before first startup, set the administrator password above in the backend process environment.
+
 Visit http://127.0.0.1:5173 and sign in as `admin` with your configured password. The backend script starts both API and worker and stops both when closed. Screenshot OCR requires Windows Simplified Chinese language and OCR capabilities.
 
 ## Linux setup (Ubuntu / Debian)
@@ -48,20 +48,17 @@ cd BillFlow
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r backend/requirements.lock.txt
 npm --prefix frontend ci
-export LOCAL_DEV=1
-export DATA_DIR="$PWD/data"
-export PYTHONPATH="$PWD/backend"
 export DEFAULT_ADMIN_PASSWORD='replace-with-your-own-strong-password'
-.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+bash start-backend.sh
 ```
 
-In a second terminal at the project root:
+Keep the backend terminal open. In another terminal, start the frontend from the project root:
 
 ```bash
-DATA_DIR="$PWD/data" PYTHONPATH="$PWD/backend" .venv/bin/python -m app.worker
+bash start-frontend.sh
 ```
 
-In a third terminal run `npm --prefix frontend run dev` and visit http://127.0.0.1:5173. API and worker must share the same data directory.
+Visit http://127.0.0.1:5173. The backend script starts API and worker with the same data directory; Ctrl+C stops both. Scripts can be invoked from any working directory.
 
 ## Docker Compose (Windows / Linux)
 
@@ -78,15 +75,16 @@ docker compose ps
 docker compose logs --tail=100 api worker web
 ```
 
-Open `https://your-domain`. Caddy provisions TLS, the API has no public port, and the worker processes background jobs. The API image includes OCR. Use `docker compose down` to stop; adding `-v` deletes data volumes.
+Open `https://your-domain`. Caddy provisions TLS, the API has no public port, and the worker processes background jobs. The API image includes OCR. Use `docker compose down` to stop.
 
 ## Usage and Feishu
 
-Import statements and consult the in-app guide for export instructions. Review expenses, refunds, duplicates and ambiguous records. In ledger settings, enter your own Feishu Bitable or Wiki URL, application credentials and field mapping, then test the connection. Grant the app access to read and write the target table, plus Wiki access when applicable. Select records, inspect the sync preview and confirm. Validate against a test table first.
+1. Sign in and import platform statements. See the in-app guide for export instructions.
+2. Review expenses, refunds, ambiguous records and duplicates; correct them manually where needed.
+3. In ledger settings, enter your own Feishu Bitable or Wiki URL and application credentials, configure field mapping, and test the connection. Grant the app read/write access to the target table and Wiki access when using a Wiki URL.
+4. Select records, inspect the sync preview and confirm synchronization. Sync writes to your Feishu table; validate against a test table first.
 
 ## Data and security
-
-This repository contains no personal statements, databases, uploads, screenshots, backups, logs, real ledger links or application credentials. Test directories and development validation utilities are excluded from the published source.
 
 Runtime data is created under `data/` or the Docker `ledger_data` volume, including accounts, ledgers, configuration and activity history. Keep it private. Set the initial administrator password before first startup. Changing the environment later does not reset existing passwords; use account management. Local development has a placeholder fallback password, `change-me-before-use`; configure your own password.
 

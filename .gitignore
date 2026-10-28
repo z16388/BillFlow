@@ -34,3 +34,6 @@ __pycache__/
 /htmlcov/
 .coverage
 .coverage.*
+
+# Local WeType input method runtime files
+/Tencent/
