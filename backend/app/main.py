@@ -51,6 +51,19 @@ async def auth(request: Request, call_next):
         allowed = {f'{request.url.scheme}://{request.url.netloc}', PUBLIC_ORIGIN}
         if LOCAL:
             allowed |= {'http://127.0.0.1:5173', 'http://localhost:5173', 'http://127.0.0.1:8000'}
+            # Some local browser/proxy setups strip the port from Origin.
+            # Recover only when both browser metadata and a trusted Referer
+            # confirm the same loopback page; never trust a bare Origin alone.
+            if (origin in {'http://127.0.0.1', 'http://localhost'}
+                    and request.headers.get('sec-fetch-site') == 'same-origin'):
+                try:
+                    referer = urlparse(request.headers.get('referer', ''))
+                    referer_origin = f'{referer.scheme}://{referer.netloc}'
+                    if (referer_origin in allowed
+                            and origin == f'{referer.scheme}://{referer.hostname}'):
+                        allowed.add(origin)
+                except ValueError:
+                    pass
         if origin and origin not in allowed:
             hint='请使用 http://127.0.0.1:5173 打开本地网页' if LOCAL else '请使用部署时配置的 HTTPS 域名访问，并核对 PUBLIC_ORIGIN'
             return JSONResponse({'detail': '请求来源不受信任；'+hint}, status_code=403)
