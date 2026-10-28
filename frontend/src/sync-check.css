@@ -1,0 +1,121 @@
+.sync-check-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 40px;
+  color: #71839e;
+}
+.sync-check-summary {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 14px;
+  background: #f5f8fc;
+  border-radius: 10px;
+  margin-top: 14px;
+  color: #71839e;
+  font-size: 13px;
+}
+.sync-check-summary strong {
+  color: #278665;
+}
+.sync-check-note {
+  color: #8291a6;
+  font-size: 12px;
+  margin: 12px 0;
+}
+.sync-check-items {
+  display: grid;
+  gap: 10px;
+}
+.sync-check-item {
+  padding: 12px 14px;
+  border: 1px solid #e3eaf3;
+  border-radius: 10px;
+}
+.sync-check-item header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.sync-check-item header > strong {
+  margin-right: auto;
+}
+.sync-check-item header label {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.sync-check-item small {
+  display: block;
+  color: #8291a6;
+  font-size: 11px;
+  margin: 6px 0;
+}
+.sync-check-item p {
+  color: #a37a2c;
+  font-size: 12px;
+}
+.sync-check-item details {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #71839e;
+}
+.sync-check-item summary {
+  cursor: pointer;
+  color: #3e70b8;
+}
+.sync-check-fields {
+  overflow: auto;
+  margin-top: 8px;
+}
+.sync-check-fields table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+.sync-check-fields th,
+.sync-check-fields td {
+  padding: 8px;
+  border-bottom: 1px solid #edf1f7;
+  overflow-wrap: anywhere;
+  font-weight: 400;
+}
+.sync-check-fields thead {
+  background: #f6f8fb;
+}
+.sync-check-fields .has-difference {
+  background: #fff7e9;
+  color: #9d652a;
+}
+.sync-check-pages {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #8291a6;
+}
+.sync-check-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #edf1f7;
+  padding-top: 14px;
+  margin-top: 14px;
+}
+.sync-check-footer > div {
+  display: flex;
+  gap: 8px;
+}
+@media (max-width: 600px) {
+  .sync-check-footer,
+  .sync-check-item header {
+    flex-wrap: wrap;
+  }
+}

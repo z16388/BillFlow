@@ -1,0 +1,307 @@
+/* Compact, horizontally aligned preview; editing and rule sheets are unchanged. */
+.dialog-content:has(.sync-preview-table-wrap) {
+  width: min(1200px, calc(100vw - 40px));
+  max-width: 1200px;
+}
+.sync-preview-table-wrap {
+  max-height: 50vh;
+  overflow: auto;
+  border: 1px solid #e2eaf4;
+  border-radius: 10px;
+}
+.sync-preview-table {
+  width: 100%;
+  min-width: 790px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: auto;
+  color: #5e7899;
+  font-size: 12px;
+}
+.sync-preview-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  text-align: left;
+  background: #f5f8fc;
+  color: #8a9eb8;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 12px;
+  border-bottom: 1px solid #e2eaf4;
+  white-space: nowrap;
+}
+.sync-preview-table td {
+  padding: 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf1f7;
+  max-width: 180px;
+  min-width: 85px;
+}
+.sync-preview-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.sync-preview-table tbody tr:hover td {
+  background: #fafcff;
+}
+.sync-preview-table td > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+.sync-preview-source-cell {
+  min-width: 165px !important;
+  max-width: 220px !important;
+}
+.sync-preview-source-cell > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sync-preview-source-cell strong {
+  font-size: 12px;
+  font-weight: 500;
+  max-width: 135px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sync-preview-table small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #9aaabd;
+}
+.sync-preview-source-cell > small {
+  max-width: 195px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 3px;
+}
+.sync-preview-edited {
+  color: #7199cb !important;
+}
+.sync-preview-blank {
+  color: #b0bdd0;
+}
+.sync-preview-table .sync-preview-row-actions {
+  position: sticky;
+  right: 0;
+  background: white;
+  min-width: 210px;
+  z-index: 1;
+  border-left: 1px solid #edf1f7;
+}
+.sync-preview-table th.sync-preview-row-actions {
+  background: #f5f8fc;
+  z-index: 3;
+}
+.sync-preview-row-actions > div {
+  display: flex;
+  gap: 7px;
+}
+.sync-preview-row-actions .button {
+  white-space: nowrap;
+  padding: 0 9px;
+  font-size: 11px;
+}
+.sync-preview-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin: 13px 0 18px;
+  color: #8a9eb8;
+  font-size: 11px;
+}
+.sync-preview-pagination > span {
+  margin-right: auto;
+}
+.sync-preview-pagination label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sync-preview-pagination select {
+  border: 1px solid #e2eaf4;
+  border-radius: 6px;
+  background: white;
+  padding: 5px;
+  color: #6e88a9;
+}
+@media (max-width: 600px) {
+  .dialog-content:has(.sync-preview-table-wrap) {
+    width: calc(100vw - 20px);
+  }
+  .sync-preview-pagination {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .sync-preview-pagination > span {
+    flex-basis: 100%;
+  }
+  .sync-preview-table .sync-preview-row-actions {
+    position: static;
+  }
+  .sync-preview-table-wrap {
+    max-height: 48vh;
+  }
+}
+.sync-preview-form .field {
+  margin: 18px 0;
+}
+.sync-preview-form p {
+  font-size: 11px;
+  color: #94a7be;
+  line-height: 1.8;
+  margin: 18px 0;
+}
+@media (max-width: 600px) {
+  .sync-preview-card {
+    padding: 13px;
+  }
+  .sync-preview-card header {
+    flex-wrap: wrap;
+  }
+  .sync-preview-card dl {
+    gap: 10px;
+  }
+}
+.refund-cash-adjustment {
+  padding: 18px;
+  border: 1px solid #e2eaf4;
+  border-radius: 10px;
+  margin: 18px 0;
+  background: #f9fbfe;
+}
+.refund-cash-adjustment h3 {
+  font-size: 14px;
+  color: #526f94;
+  font-weight: 500;
+}
+.refund-cash-adjustment p {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #8599b2;
+  margin: 9px 0;
+}
+.refund-cash-adjustment .field {
+  margin: 13px 0;
+}
+.sync-preview-clickable-row {
+  cursor: pointer;
+}
+.sync-preview-clickable-row:focus-visible {
+  outline: 2px solid #8ab0e5;
+  outline-offset: -2px;
+}
+.sync-preview-original-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #587faa;
+  font: inherit;
+  font-weight: 500;
+  max-width: 135px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  text-align: left;
+}
+.sync-preview-original-link:hover {
+  color: #3876cc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sync-original-heading h3 {
+  font-size: 18px;
+  font-weight: 500;
+  color: #4c6688;
+  margin: 8px 0;
+}
+.sync-original-heading p {
+  font-size: 12px;
+  color: #8a9db5;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.sync-original-totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px 0;
+  margin: 16px 0;
+  border-block: 1px solid #e8eef6;
+}
+.sync-original-detail dt {
+  font-size: 11px;
+  color: #98a9bd;
+}
+.sync-original-totals dd {
+  font-size: 16px;
+  color: #587395;
+  margin-top: 6px;
+}
+.sync-original-detail h4 {
+  font-size: 12px;
+  font-weight: 500;
+  color: #7189a8;
+  margin: 22px 0 12px;
+}
+.sync-original-record {
+  border: 1px solid #e5ebf4;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+.sync-original-record-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #617e9f;
+  font-size: 12px;
+}
+.sync-original-record-heading strong {
+  font-weight: 500;
+}
+.sync-original-record dl {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.sync-original-record dl > div {
+  display: grid;
+  grid-template-columns: 85px minmax(0, 1fr);
+  gap: 12px;
+}
+.sync-original-record dd {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #6d86a4;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.sync-original-note {
+  font-size: 12px;
+  color: #7c92af;
+  line-height: 1.8;
+}
+.sync-preview-source-cell > .sync-preview-rule-warning {
+  max-width: 195px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  color: #b67a38;
+  line-height: 1.5;
+}
+.mapping-date-warning {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 12px 0;
+}

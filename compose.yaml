@@ -1,0 +1,54 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.api
+    restart: unless-stopped
+    environment:
+      DATA_DIR: /data
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:?Set a strong initial admin password}
+      CREDENTIAL_KEY: ${CREDENTIAL_KEY:?请先配置凭证加密密钥}
+      PUBLIC_ORIGIN: https://${SITE_DOMAIN:?请先配置域名}
+    volumes:
+      - ledger_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    mem_limit: 512m
+  worker:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.api
+    command: ["python", "-m", "app.worker"]
+    restart: unless-stopped
+    environment:
+      DATA_DIR: /data
+      CREDENTIAL_KEY: ${CREDENTIAL_KEY:?请先配置凭证加密密钥}
+    volumes:
+      - ledger_data:/data
+    depends_on:
+      api:
+        condition: service_healthy
+    mem_limit: 768m
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.web
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?请先配置域名}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  ledger_data:
+  caddy_data:
+  caddy_config:
